@@ -1,47 +1,94 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using Moq.ReflectionProxy.Models;
-using Moq.ReflectionProxy.Reflexion;
+using Moq.ReflectionProxy.Mock.Setup;
+using Moq.ReflectionProxy.Models.Flows;
 
 namespace Moq.ReflectionProxy.Extensions;
 
 public static class MockExtensions
 {
-    public static MockReflectionSetup<T> SetupAny<T>(this Mock<T> mock,
+    /// <summary>
+    /// </summary>
+    /// <param name="mock"></param>
+    /// <param name="methodSelector"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static MockSetupAction<T> SetupAction<T>(this Mock<T> mock,
         Expression<Func<T, Delegate>> methodSelector)
         where T : class
     {
-        var method = ExpressionHelpers.ExtractMethodInfo(methodSelector);
-        if (method == null)
-            throw new ArgumentNullException(nameof(methodSelector));
-
-        return SetupAny(mock, method);
-    }
-
-    public static MockReflectionSetup<T> SetupAny<T>(this Mock<T> mock, MethodInfo method)
-        where T : class
-    {
-        if (!typeof(T).IsInterface && (!method.IsVirtual || method.IsFinal || method.IsAbstract))
+        var setup = MockSetup.WithReflexion(mock, methodSelector, out var method);
+        if (method.ReturnType != typeof(void))
             throw new InvalidOperationException(
-                $"Cannot mock method '{method.Name}' on type '{typeof(T).Name}': " +
-                $"only interface methods or virtual, non-abstract, non-sealed class methods can be mocked.");
+                $"Cannot configure method '{method.Name}' as Action — it returns a value.");
 
-        var withReturn = method.ReturnType != typeof(void);
-        var setupMethod = mock.GetType()
-            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-            .First(u => u.Name == nameof(Mock<T>.Setup) &&
-                        u.GetParameters().Length == 1 &&
-                        u.GetParameters()[0].ParameterType.ToString()
-                            .Contains(withReturn ? "[System.Func`" : "[System.Action`"));
-        if (withReturn) setupMethod = setupMethod.MakeGenericMethod(method.ReturnType);
-
-        var anySelector = MoqReflexionHelpers.CreateAnyArgumentCallExpression<T>(method);
-        var res = setupMethod.Invoke(mock, [anySelector])!;
-
-        return new MockReflectionSetup<T>
+        return new MockSetupAction<T>
         {
             Method = method,
-            SetupResult = res
+            Result = setup
+        };
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="mock"></param>
+    /// <param name="method"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static MockSetupAction<T> SetupAction<T>(this Mock<T> mock, MethodInfo method)
+        where T : class
+    {
+        if (method.ReturnType != typeof(void))
+            throw new InvalidOperationException(
+                $"Cannot configure method '{method.Name}' as Action — it returns a value.");
+
+        return new MockSetupAction<T>
+        {
+            Method = method,
+            Result = MockSetup.WithReflexion(mock, method)
+        };
+    }
+
+
+    /// <summary>
+    /// </summary>
+    /// <param name="mock"></param>
+    /// <param name="methodSelector"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static MockSetupFunction<T> SetupFunction<T>(this Mock<T> mock,
+        Expression<Func<T, Delegate>> methodSelector)
+        where T : class
+    {
+        var setup = MockSetup.WithReflexion(mock, methodSelector, out var method);
+        if (method.ReturnType == typeof(void))
+            throw new InvalidOperationException(
+                $"Cannot configure method '{method.Name}' as a function — it returns void");
+
+        return new MockSetupFunction<T>
+        {
+            Method = method,
+            Result = setup
+        };
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="mock"></param>
+    /// <param name="method"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static MockSetupFunction<T> SetupFunction<T>(this Mock<T> mock, MethodInfo method)
+        where T : class
+    {
+        if (method.ReturnType == typeof(void))
+            throw new InvalidOperationException(
+                $"Cannot configure method '{method.Name}' as a function — it returns void");
+
+        return new MockSetupFunction<T>
+        {
+            Method = method,
+            Result = MockSetup.WithReflexion(mock, method)
         };
     }
 }
