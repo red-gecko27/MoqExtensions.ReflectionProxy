@@ -15,7 +15,7 @@ public class MethodForwardingTests
         MethodMockingCaseReference.New(nameof(IReflectionTest.Compare), [1, 1]),
         MethodMockingCaseReference.New(nameof(IReflectionTest.Compare), [1, 8]),
         MethodMockingCaseReference.New(nameof(IReflectionTest.Calculate), [1, 8]),
-        MethodMockingCaseReference.New(nameof(IReflectionTest.Calculate), [1, 8]),
+        MethodMockingCaseReference.New(nameof(IReflectionTest.Calculate), [8, 4]),
         // ─── With many arguments ───
         MethodMockingCaseReference.New(nameof(IReflectionTest.ComputeRectArea), [1.0, 8.0]),
         MethodMockingCaseReference.New(nameof(IReflectionTest.FormatMessage),
@@ -51,7 +51,7 @@ public class MethodForwardingTests
         // ─── With Exceptions ───
         MethodMockingCaseReference.New(nameof(IReflectionTest.ActionThrow), [new Exception("test")]),
         MethodMockingCaseReference.New(nameof(IReflectionTest.FunctionThrow), [new Exception("test")]),
-        MethodMockingCaseReference.New(nameof(IReflectionTest.ThrowAsync)),
+        MethodMockingCaseReference.New(nameof(IReflectionTest.ThrowAsync), [new Exception("test")]),
         MethodMockingCaseReference.New(nameof(IReflectionTest.ThrowAsyncGeneric), [5, new Exception("test")],
             [typeof(int)])
     ];

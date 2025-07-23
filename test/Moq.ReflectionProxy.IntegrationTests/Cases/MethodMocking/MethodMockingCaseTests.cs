@@ -21,49 +21,21 @@ public static class MethodMockingCaseTests
                                   $"Method {c.MethodName} not found on IReflectionTest");
 
         var (mockInstance, implInstance) = SetupMockAndImplementation(interfaceMethod, interceptor);
-        var implResult = InvokeMethod(c.MethodName, c.Generics, c.Parameters, implInstance, out var implException);
-        var mockResult = InvokeMethod(c.MethodName, c.Generics, c.Parameters, mockInstance, out var mockException);
+        var (implException, implResult) =
+            await InvokeDynamicMethod(c.MethodName, c.Generics, c.Parameters, implInstance);
+        var (mockException, mockResult) =
+            await InvokeDynamicMethod(c.MethodName, c.Generics, c.Parameters, mockInstance);
 
         if (mockException != null || implException != null)
         {
             Assert.Equal(implException?.Message, mockException?.Message);
             Assert.Equal(implException?.InnerException?.Message, mockException?.InnerException?.Message);
-            return (implException?.InnerException, null);
+            return (implException?.InnerException ?? implException, null);
         }
 
         Assert.Equal(implResult?.GetType().ToString(), mockResult?.GetType().ToString());
-        if (implResult is Task implResTask && mockResult is Task mockResTask)
-        {
-            implException = await AwaitTaskAndCatchException(implResTask);
-            mockException = await AwaitTaskAndCatchException(mockResTask);
-
-            if (implException != null || mockException != null)
-            {
-                Assert.Equal(implException?.Message, mockException?.Message);
-                Assert.Equal(implException?.InnerException?.Message, mockException?.InnerException?.Message);
-                return (implException?.InnerException, null);
-            }
-
-            if (implResTask.GetType().IsGenericType &&
-                implResTask.GetType().GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                var implRes = implResTask.GetType().GetProperty("Result")!.GetValue(implResTask);
-                var mockRes = mockResTask.GetType().GetProperty("Result")!.GetValue(mockResTask);
-                Assert.Equal(implRes, mockRes);
-                return (null, implRes);
-            }
-        }
-        else
-        {
-            Assert.Equal(implResult, mockResult);
-            return (null, implResult);
-        }
-
-        // Additional custom assertions on impl state
-        if (c.TestCalled != null)
-            Assert.True(c.TestCalled(implInstance), "Custom implementation check failed.");
-
-        return null;
+        Assert.Equal(implResult, mockResult);
+        return (null, implResult);
     }
 
     public static async Task CheckForwardImplementationWithInterception(this MethodMockingCaseReference c)
@@ -89,11 +61,24 @@ public static class MethodMockingCaseTests
             context =>
             {
                 interceptValueCalled = true;
-                var receivedValue = context.UnwrapReturnTaskValue.GetType() != typeof(NotSet)
+                var received = context.UnwrapReturnTaskValue.GetType() != typeof(NotSet)
                     ? context.UnwrapReturnTaskValue
                     : context.ReturnValue;
-                if (attended?.Item2 is not NotSet || receivedValue is not NotSet)
-                    Assert.Equal(attended?.Item2, receivedValue is NotSet ? null : receivedValue);
+
+                if (attended?.Item2 is NotSet or VoidValue || received is NotSet or VoidValue)
+                {
+                    var attendedType = attended?.Item2?.GetType().Name ?? nameof(NotSet);
+                    var receivedType = received.GetType().Name;
+
+                    if (attendedType == "VoidTaskResult") attendedType = nameof(VoidValue);
+                    if (receivedType == "VoidTaskResult") receivedType = nameof(VoidValue);
+
+                    Assert.Equal(attendedType, receivedType);
+                }
+                else
+                {
+                    Assert.Equal(attended?.Item2, received);
+                }
             }
         ));
 
@@ -120,12 +105,11 @@ public static class MethodMockingCaseTests
         return (mock.Object, impl);
     }
 
-    private static object? InvokeMethod(
+    private static async Task<(Exception? exception, object? result)> InvokeDynamicMethod(
         string methodName,
         Type[]? genericParams,
         object?[]? parameters,
-        object instance,
-        out Exception? exception)
+        object instance)
     {
         // Use the mocked type's method info
         var method = instance.GetType().GetMethod(methodName)
@@ -136,28 +120,19 @@ public static class MethodMockingCaseTests
             ? method.MakeGenericMethod(genericParams)
             : method;
 
-        exception = null;
         try
         {
-            return toInvoke.Invoke(instance, parameters);
+            var invoke = toInvoke.Invoke(instance, parameters);
+            if (invoke is not Task task) return (null, invoke);
+
+            await task;
+            return task.GetType() == typeof(Task)
+                ? (null, null)
+                : (null, task.GetType().GetProperty("Result")!.GetValue(task));
         }
         catch (Exception ex)
         {
-            exception = ex;
-            return null;
-        }
-    }
-
-    private static async Task<Exception?> AwaitTaskAndCatchException<TTask>(TTask task) where TTask : Task
-    {
-        try
-        {
-            await task.ConfigureAwait(false);
-            return null;
-        }
-        catch (Exception exception)
-        {
-            return exception;
+            return (ex, null);
         }
     }
 

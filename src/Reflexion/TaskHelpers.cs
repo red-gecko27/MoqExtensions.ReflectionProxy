@@ -78,7 +78,7 @@ public static class TaskHelpers
             AddTaskCallback(taskValue, res =>
             {
                 if (res.IsFaulted) onException(res.Exception);
-                else onValue(new Ignored());
+                else onValue(new VoidValue());
             });
 
         else if (taskType.IsGenericType && taskType.GetGenericTypeDefinition() == typeof(Task<>))
@@ -88,7 +88,8 @@ public static class TaskHelpers
                 else onValue(res.GetType().GetProperty("Result")?.GetValue(res)!);
             });
 
-        throw new InvalidOperationException($"{taskType} is not a task.");
+        else
+            throw new InvalidOperationException($"{taskType} is not a task.");
     }
 
     /// <summary>
