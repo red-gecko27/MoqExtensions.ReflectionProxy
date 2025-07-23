@@ -19,11 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Moq.ReflectionProxy.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Tests\"/>
+        <ProjectReference Include="..\Moq.ReflectionProxy.UnitTests\Moq.ReflectionProxy.UnitTests.csproj"/>
     </ItemGroup>
 
 </Project>
