@@ -1,4 +1,4 @@
-namespace Moq.ReflectionProxy.UnitTests.Supports;
+namespace Moq.ReflectionProxy.IntegrationTests.Supports;
 
 public interface IReflectionTest
 {
@@ -28,7 +28,7 @@ public interface IReflectionTest
 
     // ─── With parameters out/ref ───
     bool TryParse(string input, out int result);
-    void UpdateValue(ref int value);
+    void TripleValue(ref int value);
 
     //  ─── With complex type  ───
     Task<Dictionary<string, List<T>>> GetComplexDataAsync<T>(T criteria);
@@ -39,6 +39,12 @@ public interface IReflectionTest
     Task<T?> GetAsyncNullableAsync<T>() where T : class;
     Task<T?> GetAsyncNullableValueAsync<T>(T input) where T : class;
     bool IsNull(object? value);
+
+    // ─── With exception  ───
+    void ActionThrow(Exception exception);
+    int FunctionThrow(Exception exception);
+    Task ThrowAsync(Exception exception);
+    Task<T> ThrowAsyncGeneric<T>(T data, Exception exception);
 }
 
 public class ReflectionTest : IReflectionTest
@@ -120,13 +126,13 @@ public class ReflectionTest : IReflectionTest
 
     public async Task RunAsync()
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
         RunAsyncIsCalled = true;
     }
 
     public async Task<int> GetNumberAsync()
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
         return 42;
     }
 
@@ -142,7 +148,7 @@ public class ReflectionTest : IReflectionTest
 
     public async Task<(bool Success, string Error)> TryExecuteAsync(string command)
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
         return string.IsNullOrEmpty(command)
             ? (false, "empty command")
             : (true, command);
@@ -157,9 +163,9 @@ public class ReflectionTest : IReflectionTest
         return int.TryParse(input, out result);
     }
 
-    public void UpdateValue(ref int value)
+    public void TripleValue(ref int value)
     {
-        value += 42;
+        value *= 3;
     }
 
     // ─────────────────────────────
@@ -168,7 +174,7 @@ public class ReflectionTest : IReflectionTest
 
     public async Task<Dictionary<string, List<T>>> GetComplexDataAsync<T>(T criteria)
     {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
 
         var result = new Dictionary<string, List<T>>
         {
@@ -207,5 +213,31 @@ public class ReflectionTest : IReflectionTest
     public bool IsNull(object? value)
     {
         return value == null;
+    }
+
+    // ─────────────────────────────
+    //         With exception
+    // ─────────────────────────────
+
+    public void ActionThrow(Exception exception)
+    {
+        throw exception;
+    }
+
+    public int FunctionThrow(Exception exception)
+    {
+        throw exception;
+    }
+
+    public async Task ThrowAsync(Exception exception)
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
+        throw exception;
+    }
+
+    public async Task<T> ThrowAsyncGeneric<T>(T data, Exception exception)
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
+        throw exception;
     }
 }

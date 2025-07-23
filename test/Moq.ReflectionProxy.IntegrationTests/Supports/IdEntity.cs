@@ -1,8 +1,8 @@
-namespace Moq.ReflectionProxy.UnitTests.Supports;
+namespace Moq.ReflectionProxy.IntegrationTests.Supports;
 
 public class IdEntity : IEquatable<IdEntity>
 {
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     public bool Equals(IdEntity? other)
     {

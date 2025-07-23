@@ -6,7 +6,7 @@ using Moq.ReflectionProxy.Reflexion;
 namespace Moq.ReflectionProxy.Interceptors;
 
 public class MethodInterceptor(
-    Func<InvocationContext, InterceptSubstitution> onInterceptEntry,
+    Func<InvocationContext, InterceptSubstitution?> onInterceptEntry,
     Action<InvocationContext> onInterceptException,
     Action<InvocationContext> onInterceptValue
 ) : IMethodInterceptor
@@ -17,7 +17,7 @@ public class MethodInterceptor(
     public void InterceptEntry(InvocationContext context)
     {
         var substitution = onInterceptEntry.Invoke(context);
-        if (substitution.Enabled == false) return;
+        if (substitution == null) return;
 
         if (substitution.ByException != null)
         {

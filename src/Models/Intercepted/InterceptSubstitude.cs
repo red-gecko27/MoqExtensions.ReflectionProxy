@@ -4,7 +4,6 @@ namespace Moq.ReflectionProxy.Models.Intercepted;
 
 public class InterceptSubstitution
 {
-    public bool Enabled { get; init; }
     public Exception? ByException { get; set; }
 
     /// <summary>

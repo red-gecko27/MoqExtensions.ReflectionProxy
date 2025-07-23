@@ -11,31 +11,18 @@ public static class MockReturns
     /// </summary>
     /// <param name="setup"></param>
     /// <param name="implementation"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static object WithImplementation<T>(MockSetupFunction<T> setup, T implementation) where T : class
-    {
-        var mockReturns = setup.Result.GetType()
-            .GetMethod(nameof(MockFlow.ISetup<object, object>.Returns), [typeof(InvocationFunc)])!;
-
-        var invocation = InvocationBuilder.DelegateFuncToImplementation(implementation, setup.Method);
-        return mockReturns.Invoke(setup.Result, [invocation])!;
-    }
-
-    /// <summary>
-    /// </summary>
-    /// <param name="setup"></param>
-    /// <param name="implementation"></param>
     /// <param name="interceptor"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static object WithImplementation<T>(MockSetupFunction<T> setup, T implementation,
-        IMethodInterceptor interceptor) where T : class
+        IMethodInterceptor? interceptor = null) where T : class
     {
         var mockReturns = setup.Result.GetType()
             .GetMethod(nameof(MockFlow.ISetup<object, object>.Returns), [typeof(InvocationFunc)])!;
 
-        var invocation = InvocationBuilder.DelegateFuncToImplementation(implementation, setup.Method, interceptor);
+        var invocation = interceptor != null
+            ? InvocationBuilder.DelegateFuncToImplementation(implementation, setup.Method, interceptor)
+            : InvocationBuilder.DelegateFuncToImplementation(implementation, setup.Method);
         return mockReturns.Invoke(setup.Result, [invocation])!;
     }
 }

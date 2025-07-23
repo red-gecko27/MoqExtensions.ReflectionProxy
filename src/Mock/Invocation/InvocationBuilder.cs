@@ -24,7 +24,16 @@ public static class InvocationBuilder
                 ? implMethod.MakeGenericMethod(invocation.Method.GetGenericArguments())
                 : implMethod;
 
-            return method.Invoke(implementation, invocation.Arguments.ToArray())!;
+            try
+            {
+                return method.Invoke(implementation, invocation.Arguments.ToArray())!;
+            }
+            catch (Exception exception)
+            {
+                if (exception is TargetInvocationException && exception.InnerException != null)
+                    throw exception.InnerException;
+                throw;
+            }
         });
     }
 
@@ -67,9 +76,13 @@ public static class InvocationBuilder
             }
             catch (Exception exception)
             {
-                context.SetException(exception);
+                var resolved = exception is TargetInvocationException && exception.InnerException != null
+                    ? exception.InnerException
+                    : exception;
+
+                context.SetException(resolved);
                 interceptor.InterceptThrowException(context);
-                throw;
+                throw resolved;
             }
 
             context.SetResult(result);
@@ -95,7 +108,16 @@ public static class InvocationBuilder
                 ? implMethod.MakeGenericMethod(invocation.Method.GetGenericArguments())
                 : implMethod;
 
-            method.Invoke(implementation, invocation.Arguments.ToArray());
+            try
+            {
+                method.Invoke(implementation, invocation.Arguments.ToArray());
+            }
+            catch (Exception exception)
+            {
+                if (exception is TargetInvocationException && exception.InnerException != null)
+                    throw exception.InnerException;
+                throw;
+            }
         });
     }
 
@@ -141,9 +163,13 @@ public static class InvocationBuilder
             }
             catch (Exception exception)
             {
-                context.SetException(exception);
+                var resolved = exception is TargetInvocationException && exception.InnerException != null
+                    ? exception.InnerException
+                    : exception;
+
+                context.SetException(resolved);
                 interceptor.InterceptThrowException(context);
-                throw;
+                throw resolved;
             }
 
             context.SetResult();
