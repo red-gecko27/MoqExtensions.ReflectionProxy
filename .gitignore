@@ -33,3 +33,7 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 .env
+
+# Force skip idea
+.idea
+Moq.ReflectionProxy.sln.DotSettings.user
