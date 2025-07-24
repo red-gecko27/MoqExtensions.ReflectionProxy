@@ -1,6 +1,6 @@
 namespace Moq.ReflectionProxy.IntegrationTests.Supports;
 
-public interface IReflectionTest
+public interface ITestService
 {
     // ─── Simple ───
     void DoNothing();
@@ -47,7 +47,7 @@ public interface IReflectionTest
     Task<T> ThrowAsyncGeneric<T>(T data, Exception exception);
 }
 
-public class ReflectionTest : IReflectionTest
+public class TestService : ITestService
 {
     // ─────────────────────────────
     //           Simple

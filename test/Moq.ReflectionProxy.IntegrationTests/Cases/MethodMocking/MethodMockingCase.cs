@@ -13,12 +13,12 @@ public class MethodMockingCaseReference : TestCaseReferenceLinker<MethodMockingC
     public required string MethodName { get; set; }
     public required object?[]? Parameters { get; set; }
     public required Type[]? Generics { get; set; }
-    public required Func<ReflectionTest, bool>? TestCalled { get; set; }
+    public required Func<TestService, bool>? TestCalled { get; set; }
 
     public override string ToString()
     {
         var callback = TestCalled != null ? " -> callback()" : "";
-        var method = typeof(IReflectionTest).GetMethod(MethodName)!;
+        var method = typeof(ITestService).GetMethod(MethodName)!;
 
         return $"{method.ReturnType.Name} {MethodName}" +
                $"{JsonSerializer.Serialize(Generics?.Select(x => x.Name) ?? [])}" +
@@ -33,7 +33,8 @@ public class MethodMockingCaseReference : TestCaseReferenceLinker<MethodMockingC
         string methodName,
         object?[]? parameters = null,
         Type[]? generics = null,
-        Func<ReflectionTest, bool>? testImpl = null)
+        Func<TestService, bool>? testImpl = null
+    )
     {
         return new MethodMockingCaseReference
         {

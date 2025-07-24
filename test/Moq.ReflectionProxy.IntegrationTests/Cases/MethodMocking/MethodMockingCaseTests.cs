@@ -3,7 +3,8 @@ using Moq.ReflectionProxy.Extensions;
 using Moq.ReflectionProxy.IntegrationTests.Supports;
 using Moq.ReflectionProxy.Interceptors;
 using Moq.ReflectionProxy.Interceptors.Interfaces;
-using Moq.ReflectionProxy.Models.Utils.Markers;
+using Moq.ReflectionProxy.Models.Intercepted;
+using Moq.ReflectionProxy.Models.Utils;
 
 namespace Moq.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
 
@@ -16,7 +17,7 @@ public static class MethodMockingCaseTests
     public static async Task<(Exception?, object?)?> CheckForwardImplementation(this MethodMockingCaseReference c,
         IMethodInterceptor? interceptor = null)
     {
-        var interfaceMethod = typeof(IReflectionTest).GetMethod(c.MethodName) ??
+        var interfaceMethod = typeof(ITestService).GetMethod(c.MethodName) ??
                               throw new InvalidOperationException(
                                   $"Method {c.MethodName} not found on IReflectionTest");
 
@@ -61,24 +62,11 @@ public static class MethodMockingCaseTests
             context =>
             {
                 interceptValueCalled = true;
-                var received = context.UnwrapReturnTaskValue.GetType() != typeof(NotSet)
+                var received = context.IsUnwrapTask
                     ? context.UnwrapReturnTaskValue
                     : context.ReturnValue;
 
-                if (attended?.Item2 is NotSet or VoidValue || received is NotSet or VoidValue)
-                {
-                    var attendedType = attended?.Item2?.GetType().Name ?? nameof(NotSet);
-                    var receivedType = received.GetType().Name;
-
-                    if (attendedType == "VoidTaskResult") attendedType = nameof(VoidValue);
-                    if (receivedType == "VoidTaskResult") receivedType = nameof(VoidValue);
-
-                    Assert.Equal(attendedType, receivedType);
-                }
-                else
-                {
-                    Assert.Equal(attended?.Item2, received);
-                }
+                Assert.Equal(attended?.Item2, received.Value);
             }
         ));
 
@@ -87,17 +75,60 @@ public static class MethodMockingCaseTests
         Assert.NotEqual(interceptExceptionCalled, interceptValueCalled);
     }
 
+    public static async Task CheckForwardImplementationWithReplacedValue(this MethodMockingCaseReference c)
+    {
+        var interceptEntryCalled = false;
+
+        var interfaceMethod = typeof(ITestService).GetMethod(c.MethodName) ??
+                              throw new InvalidOperationException(
+                                  $"Method {c.MethodName} not found on IReflectionTest");
+
+        object? replacedBy = null;
+        var interceptor = new MethodInterceptor(
+            context =>
+            {
+                interceptEntryCalled = true;
+                if (context.Method.ReturnType == typeof(void) || context.Method.ReturnType == typeof(Task))
+                    return new InterceptSubstitution
+                    {
+                        ByException = null,
+                        ByValue = new ExplicitValue<object?>()
+                    };
+
+                replacedBy = BuildDefaultType(context.Method.ReturnType);
+                return new InterceptSubstitution
+                {
+                    ByException = null,
+                    ByValue = new ExplicitValue<object?>(replacedBy)
+                };
+            },
+            _ => Assert.Fail(),
+            _ => Assert.Fail()
+        );
+
+        var (mockInstance, implInstance) = SetupMockAndImplementation(interfaceMethod, interceptor);
+        var (mockException, mockResult) =
+            await InvokeDynamicMethod(c.MethodName, c.Generics, c.Parameters, mockInstance);
+
+        Assert.True(interceptEntryCalled);
+        if (c.TestCalled != null)
+            Assert.False(c.TestCalled(implInstance));
+
+        Assert.Equal(replacedBy, mockResult);
+        Assert.Null(mockException);
+    }
+
     // ─────────────────────────────
     //           Helpers 
     // ─────────────────────────────
 
     #region Internal Helepers
 
-    private static (IReflectionTest mock, ReflectionTest impl) SetupMockAndImplementation(
+    private static (ITestService mock, TestService impl) SetupMockAndImplementation(
         MethodInfo interfaceMethod, IMethodInterceptor? interceptor = null)
     {
-        var mock = new Mock<IReflectionTest>();
-        var impl = new ReflectionTest();
+        var mock = new Mock<ITestService>();
+        var impl = new TestService();
 
         if (interfaceMethod.ReturnType == typeof(void)) mock.SetupAction(interfaceMethod).ForwardTo(impl, interceptor);
         else mock.SetupFunction(interfaceMethod).ForwardTo(impl, interceptor);
@@ -134,6 +165,34 @@ public static class MethodMockingCaseTests
         {
             return (ex, null);
         }
+    }
+
+    private static object? BuildDefaultType(Type type)
+    {
+        if (type == typeof(string)) return "default_string";
+        if (type == typeof(int)) return 888;
+        if (type == typeof(bool)) return false;
+        if (type == typeof(double)) return 99.99;
+        if (type == typeof(List<int>)) return new List<int> { 1, 2, 3 };
+        if (type == typeof(List<string>)) return new List<string> { "1", "2", "3" };
+        if (type == typeof(int?)) return 999;
+        if (type == typeof(TimeSpan)) return TimeSpan.FromHours(11);
+        if (type == typeof(ValueTuple<int, int>)) return (98, 12);
+        if (type == typeof(ValueTuple<bool, string>)) return (true, "12");
+        if (type == typeof(Dictionary<int, string>)) return new Dictionary<int, string> { { 1, "1" } };
+        if (type == typeof(Dictionary<string, int>)) return new Dictionary<string, int> { { "2", 2 } };
+        if (type == typeof(TestService)) return new TestService();
+        if (type == typeof(DateTime?)) return DateTime.MaxValue;
+        if (type == typeof(IdEntity)) return new IdEntity();
+        if (type == typeof(Dictionary<string, List<string>>))
+            return new Dictionary<string, List<string>> { { "a", ["a"] } };
+        if (type == typeof(Dictionary<string, List<int>>))
+            return new Dictionary<string, List<int>> { { "2", [2] } };
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>) &&
+            type.GenericTypeArguments.Length == 1)
+            return BuildDefaultType(type.GenericTypeArguments[0]);
+
+        throw new NotSupportedException($"Type {type} not supported");
     }
 
     #endregion

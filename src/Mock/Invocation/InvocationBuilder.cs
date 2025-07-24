@@ -67,7 +67,7 @@ public static class InvocationBuilder
 
             interceptor.InterceptEntry(context);
             if (context.CompletedAt != null)
-                return context.Exception == null ? context.ReturnValue : throw context.Exception;
+                return context.Exception == null ? context.ReturnValue.Value! : throw context.Exception;
 
             object result;
             try

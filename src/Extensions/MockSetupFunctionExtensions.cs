@@ -12,16 +12,20 @@ public static class MockSetupFunctionExtensions
     /// <param name="setup"></param>
     /// <param name="implementation"></param>
     /// <param name="interceptor"></param>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TInterface"></typeparam>
     /// <typeparam name="TImplementation"></typeparam>
     /// <returns></returns>
-    public static void ForwardTo<T, TImplementation>(
-        this MockSetupFunction<T> setup,
+    public static void ForwardTo<TInterface, TImplementation>(
+        this MockSetupFunction<TInterface> setup,
         TImplementation implementation,
         IMethodInterceptor? interceptor = null)
-        where T : class
-        where TImplementation : class, T
+        where TInterface : class
+        where TImplementation : class, TInterface
     {
+        var type = typeof(TInterface);
+        if (!type.IsInterface)
+            throw new ArgumentException($"{type.Name} is not an interface");
+
         _ = MockReturns.WithImplementation(setup, implementation, interceptor);
     }
 
@@ -30,16 +34,20 @@ public static class MockSetupFunctionExtensions
     /// <param name="setup"></param>
     /// <param name="implementation"></param>
     /// <param name="interceptor"></param>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TInterface"></typeparam>
     /// <typeparam name="TImplementation"></typeparam>
     /// <returns></returns>
-    public static void ForwardTo<T, TImplementation>(
-        this MockSetupAction<T> setup,
+    public static void ForwardTo<TInterface, TImplementation>(
+        this MockSetupAction<TInterface> setup,
         TImplementation implementation,
         IMethodInterceptor? interceptor = null)
-        where T : class
-        where TImplementation : class, T
+        where TInterface : class
+        where TImplementation : class, TInterface
     {
+        var type = typeof(TInterface);
+        if (!type.IsInterface)
+            throw new ArgumentException($"{type.Name} is not an interface");
+
         _ = MockCallback.WithImplementation(setup, implementation, interceptor);
     }
 }

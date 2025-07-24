@@ -1,4 +1,4 @@
-using Moq.ReflectionProxy.Models.Utils.Markers;
+using Moq.ReflectionProxy.Models.Utils;
 
 namespace Moq.ReflectionProxy.Reflexion;
 
@@ -11,7 +11,7 @@ public static class TaskHelpers
     public static bool IsTaskType(Type type)
     {
         return type == typeof(Task) ||
-               type.GetGenericTypeDefinition() == typeof(Task<>);
+               (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>));
     }
 
     /// <summary>
@@ -19,7 +19,7 @@ public static class TaskHelpers
     /// <param name="value"></param>
     /// <param name="taskType"></param>
     /// <returns></returns>
-    public static object WrapInTask(object value, Type taskType)
+    public static object WrapInTask(object? value, Type taskType)
     {
         if (value is Task)
             throw new InvalidOperationException("Task cannot be wrapped by Task.");
@@ -71,21 +71,21 @@ public static class TaskHelpers
     public static void AddTaskCallback<TTask>(
         Type taskType,
         TTask taskValue,
-        Action<object> onValue,
+        Action<ExplicitValue<object>> onValue,
         Action<Exception> onException) where TTask : Task
     {
         if (taskType == typeof(Task))
             AddTaskCallback(taskValue, res =>
             {
                 if (res.IsFaulted) onException(res.Exception);
-                else onValue(new VoidValue());
+                else onValue(new ExplicitValue<object>());
             });
 
         else if (taskType.IsGenericType && taskType.GetGenericTypeDefinition() == typeof(Task<>))
             AddTaskCallback(taskValue, res =>
             {
                 if (res.IsFaulted) onException(res.Exception);
-                else onValue(res.GetType().GetProperty("Result")?.GetValue(res)!);
+                else onValue(new ExplicitValue<object>(res.GetType().GetProperty("Result")?.GetValue(res)!));
             });
 
         else

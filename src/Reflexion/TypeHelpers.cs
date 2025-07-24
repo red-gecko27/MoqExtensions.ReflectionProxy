@@ -8,7 +8,7 @@ public static class TypeHelpers
     /// <param name="value"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static object CastToType(object value, Type targetType)
+    public static object CastToType(object? value, Type targetType)
     {
         if (value == null!)
         {

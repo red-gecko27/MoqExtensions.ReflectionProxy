@@ -1,5 +1,5 @@
 using System.Reflection;
-using Moq.ReflectionProxy.Models.Utils.Markers;
+using Moq.ReflectionProxy.Models.Utils;
 
 namespace Moq.ReflectionProxy.Models;
 
@@ -34,14 +34,16 @@ public class InvocationContext
     public TimeSpan ElapsedTime =>
         CompletedAt?.Subtract(StartAt) ?? DateTime.UtcNow.Subtract(StartAt);
 
+    public bool IsUnwrapTask { get; set; }
+
     /// <summary>
     ///     Gets the return value of the method invocation, if completed successfully.
     /// </summary>
-    public object ReturnValue { get; private set; } = new NotSet();
+    public ExplicitValue<object> ReturnValue { get; private set; } = new();
 
     /// <summary>
     /// </summary>
-    public object UnwrapReturnTaskValue { get; set; } = new NotSet();
+    public ExplicitValue<object> UnwrapReturnTaskValue { get; set; } = new();
 
     /// <summary>
     ///     Gets the exception thrown during method invocation, if any occurred.
@@ -58,12 +60,12 @@ public class InvocationContext
     /// <param name="result">The return value of the method.</param>
     /// <returns>The current instance for method chaining.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the result has already been set.</exception>
-    public InvocationContext SetResult(object result)
+    public InvocationContext SetResult(object? result)
     {
         if (CompletedAt.HasValue)
             throw new InvalidOperationException("Result has already been set.");
 
-        ReturnValue = result;
+        ReturnValue = new ExplicitValue<object>(result);
         CompletedAt = DateTime.UtcNow;
         return this;
     }

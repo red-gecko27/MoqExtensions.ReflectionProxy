@@ -25,13 +25,21 @@ public class MethodInterceptor(
                 context.SetResult(TaskHelpers.WrapInExceptionTask(substitution.ByException, context.Method.ReturnType));
             else
                 context.SetException(substitution.ByException);
+            return;
         }
-        else
+
+        if (context.Method.ReturnType == typeof(void) || context.Method.ReturnType == typeof(Task))
         {
-            context.SetResult(TaskHelpers.IsTaskType(context.Method.ReturnType)
-                ? TaskHelpers.WrapInTask(substitution.ByValue, context.Method.ReturnType)
-                : TypeHelpers.CastToType(substitution.ByValue, context.Method.ReturnType));
+            context.SetResult();
+            return;
         }
+
+        if (!substitution.ByValue.IsSet(out var replaceByValue))
+            throw new InvalidOperationException("Cannot replace value because it is not set.");
+
+        context.SetResult(TaskHelpers.IsTaskType(context.Method.ReturnType)
+            ? TaskHelpers.WrapInTask(replaceByValue, context.Method.ReturnType)
+            : TypeHelpers.CastToType(replaceByValue, context.Method.ReturnType));
     }
 
     /// <summary>
@@ -48,18 +56,19 @@ public class MethodInterceptor(
     /// <param name="context"></param>
     public void InterceptResult(InvocationContext context)
     {
-        if (context.ReturnValue is Task task)
+        if (context.ReturnValue.IsSet(out var returnValue) && returnValue is Task task)
             TaskHelpers.AddTaskCallback(
                 context.Method.ReturnType,
                 task,
-                val =>
+                unwrapValue =>
                 {
-                    context.UnwrapReturnTaskValue = val;
+                    context.IsUnwrapTask = true;
+                    context.UnwrapReturnTaskValue = unwrapValue;
                     onInterceptValue(context);
                 },
-                exception =>
+                unwrapException =>
                 {
-                    context.UnwrapException = exception;
+                    context.UnwrapException = unwrapException;
                     onInterceptException(context);
                 }
             );
