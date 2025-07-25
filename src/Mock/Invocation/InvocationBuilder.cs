@@ -65,7 +65,7 @@ public static class InvocationBuilder
             {
                 Instance = id,
                 FromMethod = invocation.Method,
-                RedirectToMethod = redirectMethod,
+                ToMethod = redirectMethod,
                 ParameterValues = args
             };
 
@@ -152,7 +152,7 @@ public static class InvocationBuilder
             {
                 Instance = id,
                 FromMethod = invocation.Method,
-                RedirectToMethod = redirectMethod,
+                ToMethod = redirectMethod,
                 ParameterValues = args
             };
 

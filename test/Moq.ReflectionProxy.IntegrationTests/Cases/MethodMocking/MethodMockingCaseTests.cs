@@ -88,15 +88,15 @@ public static class MethodMockingCaseTests
             context =>
             {
                 interceptEntryCalled = true;
-                if (context.RedirectToMethod.ReturnType == typeof(void) ||
-                    context.RedirectToMethod.ReturnType == typeof(Task))
+                if (context.ToMethod.ReturnType == typeof(void) ||
+                    context.ToMethod.ReturnType == typeof(Task))
                     return new InterceptSubstitution
                     {
                         ByException = null,
                         ByValue = new OptionalNullable<object>()
                     };
 
-                replacedBy = BuildDefaultType(context.RedirectToMethod.ReturnType);
+                replacedBy = BuildDefaultType(context.ToMethod.ReturnType);
                 return new InterceptSubstitution
                 {
                     ByException = null,

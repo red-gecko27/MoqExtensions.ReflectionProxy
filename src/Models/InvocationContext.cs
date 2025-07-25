@@ -17,7 +17,7 @@ public class InvocationContext
 
     /// <summary>
     /// </summary>
-    public required MethodInfo RedirectToMethod { get; init; }
+    public required MethodInfo ToMethod { get; init; }
 
     /// <summary>
     /// </summary>

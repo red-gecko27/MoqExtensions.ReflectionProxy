@@ -27,6 +27,9 @@ public static class MockSetupBuilder
         var mockType = typeof(T);
         var instanceParam = Expression.Parameter(mockType, "x");
 
+        if (method.IsGenericMethodDefinition)
+            method = MethodReflexion.MakeWithAllGenericArguments(method, ItIsAnyType);
+
         var argumentExpressions = method
             .GetParameters()
             .Select(param =>
@@ -36,10 +39,8 @@ public static class MockSetupBuilder
                 ))
             .ToArray<Expression>();
 
-        if (method.IsGenericMethodDefinition)
-            method = MethodReflexion.MakeWithAllGenericArguments(method, ItIsAnyType);
-
         var callExpression = Expression.Call(instanceParam, method, argumentExpressions);
-        return Expression.Lambda(callExpression, instanceParam);
+        var lambda = Expression.Lambda(callExpression, instanceParam);
+        return lambda;
     }
 }
