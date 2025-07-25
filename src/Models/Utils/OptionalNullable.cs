@@ -1,16 +1,16 @@
 namespace Moq.ReflectionProxy.Models.Utils;
 
-public class ExplicitValue<T> : IEquatable<ExplicitValue<T>>
+public class OptionalNullable<T> : IEquatable<OptionalNullable<T>>
 {
     private readonly bool _isSet;
 
-    public ExplicitValue()
+    public OptionalNullable()
     {
         _isSet = false;
         Value = default!;
     }
 
-    public ExplicitValue(T? value)
+    public OptionalNullable(T? value)
     {
         Value = value;
         _isSet = true;
@@ -18,7 +18,7 @@ public class ExplicitValue<T> : IEquatable<ExplicitValue<T>>
 
     public T? Value { get; }
 
-    public bool Equals(ExplicitValue<T>? other)
+    public bool Equals(OptionalNullable<T>? other)
     {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -36,7 +36,7 @@ public class ExplicitValue<T> : IEquatable<ExplicitValue<T>>
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExplicitValue<T>)obj);
+        return Equals((OptionalNullable<T>)obj);
     }
 
     public override int GetHashCode()

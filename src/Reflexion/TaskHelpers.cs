@@ -71,21 +71,21 @@ public static class TaskHelpers
     public static void AddTaskCallback<TTask>(
         Type taskType,
         TTask taskValue,
-        Action<ExplicitValue<object>> onValue,
+        Action<OptionalNullable<object>> onValue,
         Action<Exception> onException) where TTask : Task
     {
         if (taskType == typeof(Task))
             AddTaskCallback(taskValue, res =>
             {
                 if (res.IsFaulted) onException(res.Exception);
-                else onValue(new ExplicitValue<object>());
+                else onValue(new OptionalNullable<object>());
             });
 
         else if (taskType.IsGenericType && taskType.GetGenericTypeDefinition() == typeof(Task<>))
             AddTaskCallback(taskValue, res =>
             {
                 if (res.IsFaulted) onException(res.Exception);
-                else onValue(new ExplicitValue<object>(res.GetType().GetProperty("Result")?.GetValue(res)!));
+                else onValue(new OptionalNullable<object>(res.GetType().GetProperty("Result")?.GetValue(res)!));
             });
 
         else

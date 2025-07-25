@@ -21,14 +21,15 @@ public class MethodInterceptor(
 
         if (substitution.ByException != null)
         {
-            if (TaskHelpers.IsTaskType(context.Method.ReturnType))
-                context.SetResult(TaskHelpers.WrapInExceptionTask(substitution.ByException, context.Method.ReturnType));
+            if (TaskHelpers.IsTaskType(context.RedirectToMethod.ReturnType))
+                context.SetResult(TaskHelpers.WrapInExceptionTask(substitution.ByException,
+                    context.RedirectToMethod.ReturnType));
             else
                 context.SetException(substitution.ByException);
             return;
         }
 
-        if (context.Method.ReturnType == typeof(void) || context.Method.ReturnType == typeof(Task))
+        if (context.RedirectToMethod.ReturnType == typeof(void) || context.RedirectToMethod.ReturnType == typeof(Task))
         {
             context.SetResult();
             return;
@@ -37,9 +38,9 @@ public class MethodInterceptor(
         if (!substitution.ByValue.IsSet(out var replaceByValue))
             throw new InvalidOperationException("Cannot replace value because it is not set.");
 
-        context.SetResult(TaskHelpers.IsTaskType(context.Method.ReturnType)
-            ? TaskHelpers.WrapInTask(replaceByValue, context.Method.ReturnType)
-            : TypeHelpers.CastToType(replaceByValue, context.Method.ReturnType));
+        context.SetResult(TaskHelpers.IsTaskType(context.RedirectToMethod.ReturnType)
+            ? TaskHelpers.WrapInTask(replaceByValue, context.RedirectToMethod.ReturnType)
+            : TypeHelpers.CastToType(replaceByValue, context.RedirectToMethod.ReturnType));
     }
 
     /// <summary>
@@ -58,7 +59,7 @@ public class MethodInterceptor(
     {
         if (context.ReturnValue.IsSet(out var returnValue) && returnValue is Task task)
             TaskHelpers.AddTaskCallback(
-                context.Method.ReturnType,
+                context.RedirectToMethod.ReturnType,
                 task,
                 unwrapValue =>
                 {
@@ -68,6 +69,7 @@ public class MethodInterceptor(
                 },
                 unwrapException =>
                 {
+                    context.IsUnwrapTask = true;
                     context.UnwrapException = unwrapException;
                     onInterceptException(context);
                 }

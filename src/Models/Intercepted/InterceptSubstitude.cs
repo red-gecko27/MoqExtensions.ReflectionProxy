@@ -5,5 +5,5 @@ namespace Moq.ReflectionProxy.Models.Intercepted;
 public class InterceptSubstitution
 {
     public Exception? ByException { get; set; }
-    public ExplicitValue<object?> ByValue { get; set; } = new();
+    public OptionalNullable<object> ByValue { get; set; } = new();
 }

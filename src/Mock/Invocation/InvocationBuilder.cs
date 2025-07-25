@@ -1,6 +1,7 @@
 using System.Reflection;
 using Moq.ReflectionProxy.Interceptors.Interfaces;
 using Moq.ReflectionProxy.Models;
+using Moq.ReflectionProxy.Models.Utils;
 using Moq.ReflectionProxy.Reflexion;
 
 namespace Moq.ReflectionProxy.Mock.Invocation;
@@ -55,13 +56,16 @@ public static class InvocationBuilder
         return new InvocationFunc(invocation =>
         {
             var args = invocation.Arguments.ToArray();
-            var method = implMethod.IsGenericMethodDefinition
+            var redirectMethod = implMethod.IsGenericMethodDefinition
                 ? implMethod.MakeGenericMethod(invocation.Method.GetGenericArguments())
                 : implMethod;
 
+            var id = new InvocationInstance();
             var context = new InvocationContext
             {
-                Method = method,
+                Instance = id,
+                FromMethod = invocation.Method,
+                RedirectToMethod = redirectMethod,
                 ParameterValues = args
             };
 
@@ -72,7 +76,7 @@ public static class InvocationBuilder
             object result;
             try
             {
-                result = method.Invoke(implementation, args)!;
+                result = redirectMethod.Invoke(implementation, args)!;
             }
             catch (Exception exception)
             {
@@ -139,13 +143,16 @@ public static class InvocationBuilder
         return new InvocationAction(invocation =>
         {
             var args = invocation.Arguments.ToArray();
-            var method = implMethod.IsGenericMethodDefinition
+            var redirectMethod = implMethod.IsGenericMethodDefinition
                 ? implMethod.MakeGenericMethod(invocation.Method.GetGenericArguments())
                 : implMethod;
 
+            var id = new InvocationInstance();
             var context = new InvocationContext
             {
-                Method = method,
+                Instance = id,
+                FromMethod = invocation.Method,
+                RedirectToMethod = redirectMethod,
                 ParameterValues = args
             };
 
@@ -159,7 +166,7 @@ public static class InvocationBuilder
 
             try
             {
-                method.Invoke(implementation, args);
+                redirectMethod.Invoke(implementation, args);
             }
             catch (Exception exception)
             {
