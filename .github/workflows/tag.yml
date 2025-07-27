@@ -36,7 +36,11 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity normal
 
     - name: Pack with tag version
-      run: dotnet pack --configuration Release -p:PackageVersion=${GITHUB_REF#refs/tags/v} -o ./artifacts ./src
+      run: |
+        cd src
+        dotnet pack --configuration Release -p:PackageVersion=${GITHUB_REF#refs/tags/v} -o ./artifacts
 
     - name: Push to GitHub Packages
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
+      run: |
+        cd src
+        dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
