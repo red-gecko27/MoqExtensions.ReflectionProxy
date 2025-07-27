@@ -1,4 +1,4 @@
-namespace Moq.ReflectionProxy.Models.Utils;
+namespace MoqExtensions.ReflectionProxy.Models.Utils;
 
 /// <summary>
 ///     A unique reference type used as an identity token for method invocations.

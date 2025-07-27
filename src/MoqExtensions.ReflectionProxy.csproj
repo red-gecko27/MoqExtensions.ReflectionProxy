@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>MoqExtensions.ReflectionProxy</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>red-gecko27</Authors>
+        <PackageIcon>icon.png</PackageIcon>
+        <Description>Extension for Moq to proxy method calls to a real implementation using reflection, with optional interception.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/red-gecko27/Moq.ReflectionProxy</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/red-gecko27/Moq.ReflectionProxy</RepositoryUrl>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Moq" Version="[4.20.72,)"/>
+    </ItemGroup>
+
+</Project>

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Moq.ReflectionProxy.Reflexion;
+namespace MoqExtensions.ReflectionProxy.Reflexion;
 
 public static class MethodReflexion
 {

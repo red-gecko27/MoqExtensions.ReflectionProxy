@@ -1,6 +1,6 @@
-using Moq.ReflectionProxy.Models.Utils;
+using MoqExtensions.ReflectionProxy.Models.Utils;
 
-namespace Moq.ReflectionProxy.Reflexion;
+namespace MoqExtensions.ReflectionProxy.Reflexion;
 
 public static class TaskHelpers
 {

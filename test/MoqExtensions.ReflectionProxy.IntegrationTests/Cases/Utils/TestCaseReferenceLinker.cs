@@ -1,6 +1,6 @@
 using Xunit.Sdk;
 
-namespace Moq.ReflectionProxy.IntegrationTests.Cases.Utils;
+namespace MoqExtensions.ReflectionProxy.IntegrationTests.Cases.Utils;
 
 /// <summary>
 ///     Defines a contract for a test case that can be uniquely identified.

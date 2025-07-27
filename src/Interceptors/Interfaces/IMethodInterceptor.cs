@@ -1,6 +1,6 @@
-using Moq.ReflectionProxy.Models;
+using MoqExtensions.ReflectionProxy.Models;
 
-namespace Moq.ReflectionProxy.Interceptors.Interfaces;
+namespace MoqExtensions.ReflectionProxy.Interceptors.Interfaces;
 
 /// <summary>
 ///     Defines an interceptor for method invocations, allowing pre-execution, exception handling, and result modification.

@@ -1,11 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
-using Moq.ReflectionProxy.Extensions;
-using Moq.ReflectionProxy.IntegrationTests.Supports;
-using Moq.ReflectionProxy.Interceptors;
-using Moq.ReflectionProxy.Models.Intercepted;
-using Moq.ReflectionProxy.Models.Utils;
+using Moq;
+using MoqExtensions.ReflectionProxy.Extensions;
+using MoqExtensions.ReflectionProxy.IntegrationTests.Supports;
+using MoqExtensions.ReflectionProxy.Interceptors;
+using MoqExtensions.ReflectionProxy.Models.Intercepted;
+using MoqExtensions.ReflectionProxy.Models.Utils;
 
-namespace Moq.ReflectionProxy.IntegrationTests;
+namespace MoqExtensions.ReflectionProxy.IntegrationTests;
 
 public class ReadmeUsageTests
 {

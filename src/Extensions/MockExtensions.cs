@@ -1,7 +1,8 @@
-using Moq.ReflectionProxy.Interceptors.Interfaces;
-using Moq.ReflectionProxy.Mock.Utils;
+using Moq;
+using MoqExtensions.ReflectionProxy.Interceptors.Interfaces;
+using MoqExtensions.ReflectionProxy.Mock.Utils;
 
-namespace Moq.ReflectionProxy.Extensions;
+namespace MoqExtensions.ReflectionProxy.Extensions;
 
 public static class MockExtensions
 {

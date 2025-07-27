@@ -32,8 +32,10 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+.envs
 .env
 
 # Force skip idea
 .idea
-Moq.ReflectionProxy.sln.DotSettings.user
+*.DotSettings.user
+

@@ -1,8 +1,8 @@
 using System.Text.Json;
-using Moq.ReflectionProxy.IntegrationTests.Cases.Utils;
-using Moq.ReflectionProxy.IntegrationTests.Supports;
+using MoqExtensions.ReflectionProxy.IntegrationTests.Cases.Utils;
+using MoqExtensions.ReflectionProxy.IntegrationTests.Supports;
 
-namespace Moq.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
+namespace MoqExtensions.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
 
 public class MethodMockingCaseReference : TestCaseReferenceLinker<MethodMockingCaseReference>, ITestCaseReference
 {

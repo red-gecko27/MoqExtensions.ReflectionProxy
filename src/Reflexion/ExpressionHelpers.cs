@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Moq.ReflectionProxy.Reflexion;
+namespace MoqExtensions.ReflectionProxy.Reflexion;
 
 internal static class ExpressionHelpers
 {

@@ -1,10 +1,11 @@
 using System.Reflection;
-using Moq.ReflectionProxy.Interceptors.Interfaces;
-using Moq.ReflectionProxy.Models;
-using Moq.ReflectionProxy.Models.Utils;
-using Moq.ReflectionProxy.Reflexion;
+using Moq;
+using MoqExtensions.ReflectionProxy.Interceptors.Interfaces;
+using MoqExtensions.ReflectionProxy.Models;
+using MoqExtensions.ReflectionProxy.Models.Utils;
+using MoqExtensions.ReflectionProxy.Reflexion;
 
-namespace Moq.ReflectionProxy.Mock.Invocation;
+namespace MoqExtensions.ReflectionProxy.Mock.Invocation;
 
 public static class InvocationBuilder
 {

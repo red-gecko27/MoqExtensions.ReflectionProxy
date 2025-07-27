@@ -1,7 +1,7 @@
 using System.Reflection;
-using Moq.ReflectionProxy.Models.Utils;
+using MoqExtensions.ReflectionProxy.Models.Utils;
 
-namespace Moq.ReflectionProxy.Models;
+namespace MoqExtensions.ReflectionProxy.Models;
 
 /// <summary>
 ///     Represents the full context of a forwarded method invocation, including method metadata,

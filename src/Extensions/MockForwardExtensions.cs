@@ -1,17 +1,18 @@
+using Moq;
 using Moq.Language.Flow;
-using Moq.ReflectionProxy.Interceptors.Interfaces;
-using Moq.ReflectionProxy.Mock.Invocation;
-using Moq.ReflectionProxy.Mock.Utils;
-using Moq.ReflectionProxy.Models.Flows;
+using MoqExtensions.ReflectionProxy.Interceptors.Interfaces;
+using MoqExtensions.ReflectionProxy.Mock.Invocation;
+using MoqExtensions.ReflectionProxy.Mock.Utils;
+using MoqExtensions.ReflectionProxy.Models.Flows;
 
-namespace Moq.ReflectionProxy.Extensions;
+namespace MoqExtensions.ReflectionProxy.Extensions;
 
 public static class MockForwardExtensions
 {
     /// <summary>
     ///     Forwards a void method setup to a concrete implementation, optionally intercepting the invocation.
     /// </summary>
-    /// <param name="setup">The setup result returned by <see cref="Mock.Setup" />.</param>
+    /// <param name="setup">The setup result returned by <see cref="Moq.Mock.Setup" />.</param>
     /// <param name="implementation">The concrete implementation to forward the method call to.</param>
     /// <param name="interceptor">Optional method interceptor to wrap the call.</param>
     /// <typeparam name="TInterface">The interface type being mocked.</typeparam>
@@ -40,7 +41,7 @@ public static class MockForwardExtensions
     /// <summary>
     ///     Forwards a function setup to a concrete implementation, optionally using an interceptor to wrap the call.
     /// </summary>
-    /// <param name="setup">The setup result returned by <see cref="Mock.Setup" />.</param>
+    /// <param name="setup">The setup result returned by <see cref="Moq.Mock.Setup" />.</param>
     /// <param name="implementation">The concrete implementation to forward the function call to.</param>
     /// <param name="interceptor">Optional method interceptor to wrap the call.</param>
     /// <typeparam name="TInterface">The interface type being mocked.</typeparam>

@@ -1,6 +1,6 @@
-using Moq.ReflectionProxy.Models.Utils;
+using MoqExtensions.ReflectionProxy.Models.Utils;
 
-namespace Moq.ReflectionProxy.Models.Intercepted;
+namespace MoqExtensions.ReflectionProxy.Models.Intercepted;
 
 /// <summary>
 ///     Represents a substitution result for a method interception, allowing either an exception to be thrown

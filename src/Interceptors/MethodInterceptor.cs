@@ -1,9 +1,9 @@
-using Moq.ReflectionProxy.Interceptors.Interfaces;
-using Moq.ReflectionProxy.Models;
-using Moq.ReflectionProxy.Models.Intercepted;
-using Moq.ReflectionProxy.Reflexion;
+using MoqExtensions.ReflectionProxy.Interceptors.Interfaces;
+using MoqExtensions.ReflectionProxy.Models;
+using MoqExtensions.ReflectionProxy.Models.Intercepted;
+using MoqExtensions.ReflectionProxy.Reflexion;
 
-namespace Moq.ReflectionProxy.Interceptors;
+namespace MoqExtensions.ReflectionProxy.Interceptors;
 
 public class MethodInterceptor(
     Func<InvocationContext, InterceptSubstitution?> onInterceptEntry,

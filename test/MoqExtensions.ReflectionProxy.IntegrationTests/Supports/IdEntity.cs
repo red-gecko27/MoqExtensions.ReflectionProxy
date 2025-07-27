@@ -1,4 +1,4 @@
-namespace Moq.ReflectionProxy.IntegrationTests.Supports;
+namespace MoqExtensions.ReflectionProxy.IntegrationTests.Supports;
 
 public class IdEntity : IEquatable<IdEntity>
 {

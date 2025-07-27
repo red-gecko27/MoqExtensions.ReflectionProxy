@@ -1,7 +1,7 @@
 using System.Reflection;
 using Moq.Language.Flow;
 
-namespace Moq.ReflectionProxy.Models.Flows;
+namespace MoqExtensions.ReflectionProxy.Models.Flows;
 
 /// <summary>
 ///     Represents a mock setup for a function (non-void method), including the setup result and method information.

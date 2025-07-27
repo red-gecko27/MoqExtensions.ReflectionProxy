@@ -1,8 +1,9 @@
-﻿using Moq.ReflectionProxy.Extensions;
-using Moq.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
-using Moq.ReflectionProxy.IntegrationTests.Supports;
+﻿using Moq;
+using MoqExtensions.ReflectionProxy.Extensions;
+using MoqExtensions.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
+using MoqExtensions.ReflectionProxy.IntegrationTests.Supports;
 
-namespace Moq.ReflectionProxy.IntegrationTests;
+namespace MoqExtensions.ReflectionProxy.IntegrationTests;
 
 public class MethodForwardingTests
 {

@@ -1,7 +1,8 @@
 using System.Reflection;
+using Moq;
 using Moq.Language.Flow;
 
-namespace Moq.ReflectionProxy.Mock.Utils;
+namespace MoqExtensions.ReflectionProxy.Mock.Utils;
 
 public static class MockHelpers
 {

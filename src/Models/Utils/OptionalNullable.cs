@@ -1,4 +1,4 @@
-namespace Moq.ReflectionProxy.Models.Utils;
+namespace MoqExtensions.ReflectionProxy.Models.Utils;
 
 public class OptionalNullable<T> : IEquatable<OptionalNullable<T>>
 {

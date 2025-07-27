@@ -1,11 +1,12 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using Moq;
 using Moq.Language.Flow;
-using Moq.ReflectionProxy.Mock.Setup;
-using Moq.ReflectionProxy.Models.Flows;
-using Moq.ReflectionProxy.Reflexion;
+using MoqExtensions.ReflectionProxy.Mock.Setup;
+using MoqExtensions.ReflectionProxy.Models.Flows;
+using MoqExtensions.ReflectionProxy.Reflexion;
 
-namespace Moq.ReflectionProxy.Extensions;
+namespace MoqExtensions.ReflectionProxy.Extensions;
 
 public static class MockReflexionSetupExtensions
 {

@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using Moq.ReflectionProxy.Reflexion;
+using Moq;
+using MoqExtensions.ReflectionProxy.Reflexion;
 
-namespace Moq.ReflectionProxy.Mock.Setup;
+namespace MoqExtensions.ReflectionProxy.Mock.Setup;
 
 public static class MockSetupLambdaBuilder
 {

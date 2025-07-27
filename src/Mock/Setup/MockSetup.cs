@@ -1,6 +1,7 @@
 using System.Reflection;
+using Moq;
 
-namespace Moq.ReflectionProxy.Mock.Setup;
+namespace MoqExtensions.ReflectionProxy.Mock.Setup;
 
 public static class MockSetup
 {
@@ -15,7 +16,7 @@ public static class MockSetup
         var withReturn = method.ReturnType != typeof(void);
         var setupMethod = mock.GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-            .First(u => u.Name == nameof(Mock<T>.Setup) &&
+            .First(u => u.Name == nameof(Setup) &&
                         u.GetParameters().Length == 1 &&
                         u.GetParameters()[0].ParameterType.ToString()
                             .Contains(withReturn ? "[System.Func`" : "[System.Action`"));

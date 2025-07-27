@@ -1,12 +1,13 @@
 using System.Reflection;
-using Moq.ReflectionProxy.Extensions;
-using Moq.ReflectionProxy.IntegrationTests.Supports;
-using Moq.ReflectionProxy.Interceptors;
-using Moq.ReflectionProxy.Interceptors.Interfaces;
-using Moq.ReflectionProxy.Models.Intercepted;
-using Moq.ReflectionProxy.Models.Utils;
+using Moq;
+using MoqExtensions.ReflectionProxy.Extensions;
+using MoqExtensions.ReflectionProxy.IntegrationTests.Supports;
+using MoqExtensions.ReflectionProxy.Interceptors;
+using MoqExtensions.ReflectionProxy.Interceptors.Interfaces;
+using MoqExtensions.ReflectionProxy.Models.Intercepted;
+using MoqExtensions.ReflectionProxy.Models.Utils;
 
-namespace Moq.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
+namespace MoqExtensions.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
 
 public static class MethodMockingCaseTests
 {
