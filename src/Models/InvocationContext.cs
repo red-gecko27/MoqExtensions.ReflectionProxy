@@ -53,6 +53,10 @@ public class InvocationContext
 
     /// <summary>
     /// </summary>
+    public object? AdditionalContext { get; set; }
+
+    /// <summary>
+    /// </summary>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     public TimeSpan GetElapsedTime()

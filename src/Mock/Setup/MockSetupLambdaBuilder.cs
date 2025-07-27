@@ -4,7 +4,7 @@ using Moq.ReflectionProxy.Reflexion;
 
 namespace Moq.ReflectionProxy.Mock.Setup;
 
-public static class MockSetupBuilder
+public static class MockSetupLambdaBuilder
 {
     /// <summary>
     /// </summary>

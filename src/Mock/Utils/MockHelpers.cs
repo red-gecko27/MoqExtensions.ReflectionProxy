@@ -1,14 +1,19 @@
 using System.Reflection;
+using Moq.Language.Flow;
 
 namespace Moq.ReflectionProxy.Mock.Utils;
 
 public static class MockHelpers
 {
+    private static readonly Type SetupPhraseType = typeof(It).Assembly.GetType("Moq.Language.Flow.SetupPhrase")!;
     private static readonly Type MethodCallType = typeof(Moq.Mock).Assembly.GetType("Moq.MethodCall")!;
 
     /// <summary>
-    ///     Determines whether a specific method has been mocked/setup in a Mock object
     /// </summary>
+    /// <param name="mock"></param>
+    /// <param name="method"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static bool IsAlreadyMocked<T>(Mock<T> mock, MethodInfo method)
         where T : class
     {
@@ -40,5 +45,44 @@ public static class MockHelpers
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="setup"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static MethodInfo GetMethodInfo<T>(ISetup<T> setup) where T : class
+    {
+        var setupField = SetupPhraseType.GetField("setup", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (setupField == null)
+            throw new InvalidOperationException("Internal mock SetupPhrase is null");
+
+        var methodProp = MethodCallType.GetProperty("Method");
+        if (methodProp == null || methodProp.GetValue(setupField.GetValue(setup)) is not MethodInfo methodInfo)
+            throw new InvalidOperationException("Internal mock MethodCall.Method is null");
+
+        return methodInfo;
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="setup"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static MethodInfo GetMethodInfo<T, TResult>(ISetup<T, TResult> setup) where T : class
+    {
+        var setupField = SetupPhraseType.GetField("setup", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (setupField == null)
+            throw new InvalidOperationException("Internal mock SetupPhrase is null");
+
+        var methodProp = MethodCallType.GetProperty("Method");
+        if (methodProp == null || methodProp.GetValue(setupField.GetValue(setup)) is not MethodInfo methodInfo)
+            throw new InvalidOperationException("Internal mock MethodCall.Method is null");
+
+        return methodInfo;
     }
 }

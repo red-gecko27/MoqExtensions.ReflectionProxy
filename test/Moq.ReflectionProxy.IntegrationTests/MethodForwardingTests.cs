@@ -1,4 +1,5 @@
-﻿using Moq.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
+﻿using Moq.ReflectionProxy.Extensions;
+using Moq.ReflectionProxy.IntegrationTests.Cases.MethodMocking;
 using Moq.ReflectionProxy.IntegrationTests.Supports;
 
 namespace Moq.ReflectionProxy.IntegrationTests;
@@ -81,38 +82,25 @@ public class MethodForwardingTests
         await caseReference.CheckForwardImplementationWithReplacedValue();
     }
 
-    // ─── TODO: NOT SUPPORTED add errors - With parameters out/ref -> FAIL ───
+    [Fact]
+    public void TryParse_RefParam_ShouldFail()
+    {
+        var impl = new TestService();
+        var mock = new Mock<ITestService>();
 
-    // [Fact]
-    // public void TryParse_BindsCorrectly()
-    // {
-    //     var impl = new TestService();
-    //     var mock = new Mock<ITestService>();
-    //     mock
-    //         .SetupFunction(x => x.TryExecuteAsync)
-    //         .ForwardTo(impl);
-    //     var mocked = mock.Object;
-    //
-    //     Assert.Equal(new TestService().TryParse("42", out var implResult), mocked.TryParse("42", out var result));
-    //     Assert.Equal(implResult, result);
-    // }
-    //
-    // [Fact]
-    // public void UpdateValue_BindsCorrectly()
-    // {
-    //     var impl = new TestService();
-    //     var mock = new Mock<ITestService>();
-    //     mock
-    //         .SetupFunction(x => x.TryExecuteAsync)
-    //         .ForwardTo(impl);
-    //     var mocked = mock.Object;
-    //
-    //     var val1 = 42;
-    //     var val2 = 42;
-    //
-    //     impl.TripleValue(ref val1);
-    //     mocked.TripleValue(ref val2);
-    //
-    //     Assert.Equal(val1, val2);
-    // }
+        Assert.Throws<ArgumentException>(() => mock
+            .SetupFunction(x => x.TryParse)
+            .ForwardTo(impl));
+    }
+
+    [Fact]
+    public void TripleValue_OutParam_ShouldFail()
+    {
+        var impl = new TestService();
+        var mock = new Mock<ITestService>();
+
+        Assert.Throws<ArgumentException>(() => mock
+            .SetupAction(x => x.TripleValue)
+            .ForwardTo(impl));
+    }
 }

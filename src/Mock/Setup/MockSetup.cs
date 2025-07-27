@@ -1,31 +1,9 @@
-using System.Linq.Expressions;
 using System.Reflection;
-using Moq.ReflectionProxy.Reflexion;
 
 namespace Moq.ReflectionProxy.Mock.Setup;
 
 public static class MockSetup
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="mock"></param>
-    /// <param name="methodSelector"></param>
-    /// <param name="method"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static object WithReflexion<T>(Mock<T> mock,
-        Expression<Func<T, Delegate>> methodSelector, out MethodInfo method)
-        where T : class
-    {
-        var extracted = ExpressionHelpers.ExtractMethodInfo(methodSelector);
-        if (extracted == null)
-            throw new ArgumentNullException(nameof(methodSelector));
-
-        method = extracted;
-        return WithReflexion(mock, method);
-    }
-
     /// <summary>
     /// </summary>
     /// <param name="mock"></param>
@@ -49,7 +27,7 @@ public static class MockSetup
                         u.GetParameters()[0].ParameterType.ToString()
                             .Contains(withReturn ? "[System.Func`" : "[System.Action`"));
 
-        var anySelector = MockSetupBuilder.LambdaMethodParameter<T>(method);
+        var anySelector = MockSetupLambdaBuilder.LambdaMethodParameter<T>(method);
         if (withReturn) setupMethod = setupMethod.MakeGenericMethod(anySelector.ReturnType);
         return setupMethod.Invoke(mock, [anySelector])!;
     }
