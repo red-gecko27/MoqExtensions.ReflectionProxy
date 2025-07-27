@@ -2,6 +2,8 @@ name: Publish to GitHub Packages (on tag)
 
 on:
   push:
+    tags:
+      - v*
 
 env:
   DOTNET_VERSION: '8.0.x'
@@ -28,10 +30,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
+    - name: Authenticate with GitHub Packages
+      run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
     - name: Restore dependencies
       run: dotnet restore
       
@@ -42,14 +44,7 @@ jobs:
       run: dotnet test --no-build --configuration Release --verbosity normal
 
     - name: Pack with tag version
-      run: |
-          cd src
-          VERSION=${GITHUB_REF#refs/tags/v}
-          dotnet pack --configuration Release -p:PackageVersion=$VERSION -o ./nupkg
+      run: dotnet pack --configuration Release -p:PackageVersion=${GITHUB_REF#refs/tags/v} -o ./artifacts ./src
 
     - name: Push to GitHub Packages
-      run: |
-          cd src
-          for file in ./nupkg/*.nupkg; do
-            dotnet nuget push "$file" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-          done
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
