@@ -7,7 +7,6 @@ on:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  TAG_BRANCH: origin/feat/cd
 
 jobs:
   ci:
