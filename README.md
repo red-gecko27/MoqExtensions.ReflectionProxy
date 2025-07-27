@@ -109,7 +109,7 @@ mock.Setup(x => x.SaveCity(It.IsAny<City>(), It.IsAny<CancellationToken>()))
         // callback logic
     });
 
-// Simplified reflection-based approach
+// Reflection-based approach
 mock.SetupAction(x => x.SaveCity)
     .Callback<City, CancellationToken>((city, token) => {
         // callback logic
@@ -123,7 +123,7 @@ mock.SetupAction(x => x.SaveCity)
 mock.Setup(x => x.SearchCity(It.IsAny<string>(), It.IsAny<Zone>(), It.IsAny<CancellationToken>()))
     .ReturnsAsync(new City { Name = "Paris" });
 
-// Simplified reflection-based approach
+// Reflection-based approach
 mock.SetupFunction(x => x.SearchCity)
     .HasReturnType<City>()
     .ReturnsAsync(new City { Name = "Paris" });
@@ -144,7 +144,7 @@ mock.SetupFunction(searchMethod)
 
 ## 📖 API Reference
 
-### Core Extension Methods
+### Moq Extension Methods
 
 | Method                | Description                                       |
 |-----------------------|---------------------------------------------------|
@@ -154,7 +154,7 @@ mock.SetupFunction(searchMethod)
 | `SetupAction`         | Setup void methods via reflection                 |
 | `SetupFunction`       | Setup methods with return values via reflection   |
 
-### Interception Framework
+### Interception
 
 | Component                 | Description                                                     |
 |---------------------------|-----------------------------------------------------------------|
