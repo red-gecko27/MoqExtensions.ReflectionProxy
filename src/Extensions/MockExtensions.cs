@@ -6,14 +6,18 @@ namespace Moq.ReflectionProxy.Extensions;
 public static class MockExtensions
 {
     /// <summary>
+    ///     Configures a mock to forward all unmocked method calls to a given implementation, optionally using an interceptor.
     /// </summary>
-    /// <param name="mock"></param>
-    /// <param name="implementation"></param>
-    /// <param name="throwOnFailure"></param>
-    /// <param name="interceptor"></param>
-    /// <typeparam name="TInterface"></typeparam>
-    /// <typeparam name="TImplementation"></typeparam>
-    /// <returns></returns>
+    /// <param name="mock">The mock object of the interface to configure.</param>
+    /// <param name="implementation">The concrete implementation to forward calls to.</param>
+    /// <param name="interceptor">Optional method interceptor to wrap forwarded calls.</param>
+    /// <param name="throwOnFailure">
+    ///     If true, exceptions thrown during setup will be propagated; otherwise, they will be
+    ///     ignored.
+    /// </param>
+    /// <typeparam name="TInterface">The interface type being mocked.</typeparam>
+    /// <typeparam name="TImplementation">The concrete implementation type that implements the interface.</typeparam>
+    /// <returns>The configured mock with forwarding behavior applied to unmocked methods.</returns>
     public static Mock<TInterface> DefaultForwardTo<TInterface, TImplementation>(
         this Mock<TInterface> mock,
         TImplementation implementation,

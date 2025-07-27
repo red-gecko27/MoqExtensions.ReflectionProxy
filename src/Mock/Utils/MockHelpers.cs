@@ -8,12 +8,6 @@ public static class MockHelpers
     private static readonly Type SetupPhraseType = typeof(It).Assembly.GetType("Moq.Language.Flow.SetupPhrase")!;
     private static readonly Type MethodCallType = typeof(Moq.Mock).Assembly.GetType("Moq.MethodCall")!;
 
-    /// <summary>
-    /// </summary>
-    /// <param name="mock"></param>
-    /// <param name="method"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public static bool IsAlreadyMocked<T>(Mock<T> mock, MethodInfo method)
         where T : class
     {
@@ -47,12 +41,6 @@ public static class MockHelpers
         return false;
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="setup"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public static MethodInfo GetMethodInfo<T>(ISetup<T> setup) where T : class
     {
         var setupField = SetupPhraseType.GetField("setup", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -66,13 +54,6 @@ public static class MockHelpers
         return methodInfo;
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="setup"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public static MethodInfo GetMethodInfo<T, TResult>(ISetup<T, TResult> setup) where T : class
     {
         var setupField = SetupPhraseType.GetField("setup", BindingFlags.NonPublic | BindingFlags.Instance);

@@ -6,21 +6,12 @@ namespace Moq.ReflectionProxy.Mock.Setup;
 
 public static class MockSetupLambdaBuilder
 {
-    /// <summary>
-    /// </summary>
     private static readonly MethodInfo IsAnyMethod =
         typeof(It).GetMethod(nameof(It.IsAny), BindingFlags.Public | BindingFlags.Static)!;
 
-    /// <summary>
-    /// </summary>
     private static readonly Type ItIsAnyType = typeof(It).Assembly
         .GetType("Moq.It+IsAnyType")!;
 
-    /// <summary>
-    /// </summary>
-    /// <param name="method"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public static LambdaExpression LambdaMethodParameter<T>(MethodInfo method)
         where T : class
     {

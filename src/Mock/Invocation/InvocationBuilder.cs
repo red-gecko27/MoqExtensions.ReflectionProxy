@@ -8,12 +8,6 @@ namespace Moq.ReflectionProxy.Mock.Invocation;
 
 public static class InvocationBuilder
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="implementation"></param>
-    /// <param name="interfaceMethod"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public static InvocationFunc DelegateFuncToImplementation<T>(T implementation, MethodInfo interfaceMethod)
         where T : class
     {
@@ -38,14 +32,6 @@ public static class InvocationBuilder
         });
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="implementation"></param>
-    /// <param name="interfaceMethod"></param>
-    /// <param name="interceptor"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
     public static InvocationFunc DelegateFuncToImplementation<T>(
         T implementation,
         MethodInfo interfaceMethod,
@@ -95,12 +81,6 @@ public static class InvocationBuilder
         });
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="implementation"></param>
-    /// <param name="interfaceAction"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     public static InvocationAction DelegateActionToImplementation<T>(T implementation, MethodInfo interfaceAction)
         where T : class
     {
@@ -125,14 +105,6 @@ public static class InvocationBuilder
         });
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="implementation"></param>
-    /// <param name="interfaceMethod"></param>
-    /// <param name="interceptor"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
     public static InvocationAction DelegateActionToImplementation<T>(
         T implementation,
         MethodInfo interfaceMethod,

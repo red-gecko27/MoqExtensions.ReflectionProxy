@@ -4,12 +4,6 @@ namespace Moq.ReflectionProxy.Reflexion;
 
 public static class MethodReflexion
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="method"></param>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public static MethodInfo MakeWithAllGenericArguments(MethodInfo method, Type type)
     {
         if (!method.IsGenericMethodDefinition)
@@ -20,12 +14,6 @@ public static class MethodReflexion
         return method.MakeGenericMethod(genericArgs);
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="implementation"></param>
-    /// <param name="method"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     internal static MethodInfo FindImplementedMethod<T>(T implementation, MethodInfo method)
         where T : class
     {

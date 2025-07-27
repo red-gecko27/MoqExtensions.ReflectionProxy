@@ -4,13 +4,6 @@ namespace Moq.ReflectionProxy.Mock.Setup;
 
 public static class MockSetup
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="mock"></param>
-    /// <param name="method"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public static object WithReflexion<T>(Mock<T> mock, MethodInfo method)
         where T : class
     {

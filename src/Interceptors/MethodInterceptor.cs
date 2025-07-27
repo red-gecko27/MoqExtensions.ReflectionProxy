@@ -11,9 +11,6 @@ public class MethodInterceptor(
     Action<InvocationContext> onInterceptValue
 ) : IMethodInterceptor
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="context"></param>
     public void InterceptEntry(InvocationContext context)
     {
         var substitution = onInterceptEntry.Invoke(context);
@@ -43,18 +40,11 @@ public class MethodInterceptor(
             : TypeHelpers.CastToType(replaceByValue, context.ToMethod.ReturnType));
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="context"></param>
-    /// <exception cref="NotImplementedException"></exception>
     public void InterceptThrowException(InvocationContext context)
     {
         onInterceptException(context);
     }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="context"></param>
     public void InterceptResult(InvocationContext context)
     {
         if (context.ReturnValue.IsSet(out var returnValue) && returnValue is Task task)

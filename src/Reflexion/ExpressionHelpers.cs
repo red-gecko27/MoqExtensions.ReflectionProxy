@@ -5,11 +5,6 @@ namespace Moq.ReflectionProxy.Reflexion;
 
 internal static class ExpressionHelpers
 {
-    /// <summary>
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
     internal static MethodInfo? ExtractMethodInfo<T>(Expression<Func<T, Delegate>> expression)
     {
         if (expression.Body is not UnaryExpression { Operand: MethodCallExpression methodCall }) return null;
