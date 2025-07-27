@@ -40,7 +40,7 @@ public class User : IComparable<User>
 
 public class CreateUserRequest
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }
 
 #endregion
