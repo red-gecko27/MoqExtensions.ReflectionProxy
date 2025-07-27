@@ -1,0 +1,56 @@
+name: Publish to GitHub Packages (on tag)
+
+on:
+  push:
+    branches: [ feat/cd ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  TAG_BRANCH: origin/feat/cd
+
+jobs:
+  ci:
+    name: build and publish github package
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Ensure tag comes from main
+      run: |
+          BASE_BRANCH=$(git branch -r --contains $GITHUB_REF | grep ${{ env.TAG_BRANCH }} || true)
+          if [ -z "$BASE_BRANCH" ]; then
+            echo "Tag must come from '${{ env.TAG_BRANCH }}' branch. Skipping publish."
+            exit 1
+          fi
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+
+    - name: Pack with tag version
+      run: |
+          cd src
+          VERSION=${GITHUB_REF#refs/tags/v}
+          dotnet pack --configuration Release -p:PackageVersion=$VERSION -o ./nupkg
+
+    - name: Push to GitHub Packages
+      run: |
+          cd src
+          for file in ./nupkg/*.nupkg; do
+            dotnet nuget push "$file" --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          done
