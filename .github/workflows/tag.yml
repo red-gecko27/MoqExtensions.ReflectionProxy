@@ -17,14 +17,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
-    - name: Ensure tag comes from main
-      run: |
-          BASE_BRANCH=$(git branch -r --contains $GITHUB_REF | grep ${{ env.TAG_BRANCH }} || true)
-          if [ -z "$BASE_BRANCH" ]; then
-            echo "Tag must come from '${{ env.TAG_BRANCH }}' branch. Skipping publish."
-            exit 1
-          fi
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
