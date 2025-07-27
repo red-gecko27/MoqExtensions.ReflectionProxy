@@ -10,7 +10,6 @@
         <PackageId>MoqExtensions.ReflectionProxy</PackageId>
         <Version>1.0.0</Version>
         <Authors>red-gecko27</Authors>
-        <PackageIcon>icon.png</PackageIcon>
         <Description>Extension for Moq to proxy method calls to a real implementation using reflection, with optional interception.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/red-gecko27/Moq.ReflectionProxy</PackageProjectUrl>

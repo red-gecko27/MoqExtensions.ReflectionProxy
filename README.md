@@ -13,7 +13,7 @@ Unofficial extension for Moq that enables method call proxying to real implement
 ## 📦 Installation
 
 ```bash
-dotnet add package Moq.ReflectionProxy
+dotnet add package MoqExtensions.ReflectionProxy
 ```
 
 ## 🔧 Quick Start
