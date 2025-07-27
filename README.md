@@ -46,8 +46,8 @@ serviceCollection.AddScoped<IUserService>(provider => {
     var mock = new Mock<IUserService>();
     
     // Add custom setups here if needed
-    mock.Setup(x => x.GetUserById(999))
-        .Throws<UserNotFoundException>();
+    mock.Setup(x => x.GetUserById(It.IsAny<int>()))
+        .Throws<Exception>();
     
     // Forward all other calls to real implementation
     return mock.DefaultForwardTo(provider.GetRequiredService<UserService>()).Object;
@@ -60,35 +60,34 @@ Add sophisticated interception logic for logging, monitoring, and behavior modif
 
 ```csharp
 var interceptor = new MethodInterceptor(
-    onInterceptEntry: context => {
-        Console.WriteLine($"Calling {context.Method.Name} with {context.Arguments.Length} arguments");
-        
+    onInterceptEntry: context =>
+    {
+        Console.WriteLine($"Calling {context.FromMethod.Name} with {context.ParameterValues.Count} arguments");
+
         // Optional: Override method behavior
-        if (context.Method.Name == "GetUserById" && (int)context.ParameterValues[0] == 42) {
-            return new InterceptSubstitution {
-                ByValue = new User { Id = 42, Name = "Special User" }
-            };
+        if (context.FromMethod.Name == "GetUserById" && (int)context.ParameterValues[0]! == 42)
+        {
+            return new InterceptSubstitution
+                { ByValue = new OptionalNullable<object>(new User { Id = 42, Name = "ReplacedUser" }) };
         }
-        
+
         // Store additional context for later interceptors
-        context.AdditionalContext = DateTime.UtcNow;
-        
+        context.AdditionalContext = "some context";
+
         return null; // Continue with normal execution
     },
-    onInterceptException: context => {
-        var startTime = (DateTime)context.AdditionalContext;
-        var duration = DateTime.UtcNow - startTime;
-        
-        Console.WriteLine($"Exception in {context.FromMethod.Name} after {duration.TotalMilliseconds}ms: " +
-                         $"{(context.IsUnwrapTask ? context.UnwrapException : context.Exception).Message}");
+    onInterceptException: context =>
+    {
+        Console.WriteLine($"Exception in {context.FromMethod.Name} after {context.GetElapsedTime()}ms: " +
+                            $"{(context.IsUnwrapTask ? context.UnwrapException! : context.Exception!).Message}");
     },
-    onInterceptValue: context => {
-        var startTime = (DateTime)context.AdditionalContext;
-        var duration = DateTime.UtcNow - startTime;
-        var result = context.IsUnwrapTask ? context.UnwrapReturnTaskValue : context.Result;
+    onInterceptValue: context =>
+    {
+        // context.AdditionalContext
+        var result = context.IsUnwrapTask ? context.UnwrapReturnTaskValue : context.ReturnValue.Value;
         
-        Console.WriteLine($"{context.FromMethod.Name} completed in {duration.TotalMilliseconds}ms, " +
-                         $"returned: {result}");
+        Console.WriteLine($"{context.FromMethod.Name} completed in {context.GetElapsedTime()}ms, " +
+                            $"returned: {result}");
     }
 );
 
@@ -135,8 +134,7 @@ For methods with overloads, generic parameters, or ambiguous signatures, use the
 
 ```csharp
 // Handle complex method signatures explicitly
-var searchMethod = typeof(IUserService).GetMethod(nameof(IUserService.SearchUsers), 
-    new[] { typeof(string), typeof(SearchOptions<User>) });
+var searchMethod = typeof(IUserService).GetMethod(nameof(IUserService.SearchUsers));
 
 mock.SetupFunction(searchMethod)
     .Returns(new List<User>());
@@ -149,7 +147,6 @@ mock.SetupFunction(searchMethod)
 | Method                | Description                                       |
 |-----------------------|---------------------------------------------------|
 | `ForwardTo`           | Forward mock calls to a real implementation       |
-| `ForwardTo`           | Forward with custom interception logic            |
 | `DefaultForwardTo`    | Forward all interface methods to target           |
 | `SetupAction`         | Setup void methods via reflection                 |
 | `SetupFunction`       | Setup methods with return values via reflection   |
@@ -174,4 +171,4 @@ The `InvocationContext` provides comprehensive information about method invocati
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for complete details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for complete details.
