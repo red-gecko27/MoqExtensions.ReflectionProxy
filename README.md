@@ -1,5 +1,7 @@
 # Moq.ReflectionProxy
 
+[![Version](https://img.shields.io/nuget/vpre/MoqExtensions.ReflectionProxy.svg)](https://www.nuget.org/packages/MoqExtensions.ReflectionProxy)
+
 Unofficial extension for Moq that enables method call proxying to real implementations using reflection, with comprehensive interception capabilities.
 
 ## 🚀 Features
