@@ -37,7 +37,7 @@ jobs:
     - name: Pack with tag version
       run: |
         cd src
-        dotnet pack --configuration Release -p:PackageVersion=${GITHUB_REF#refs/tags/v}-debug -o ./artifacts
+        dotnet pack --configuration Release -p:PackageVersion=${GITHUB_REF#refs/tags/v} -o ./artifacts
 
     - name: Push to GitHub Packages
       run: |
