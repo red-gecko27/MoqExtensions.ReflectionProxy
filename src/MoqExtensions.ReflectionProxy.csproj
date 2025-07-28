@@ -11,12 +11,20 @@
         <Authors>red-gecko27</Authors>
         <Description>Extension for Moq to proxy method calls to a real implementation using reflection, with optional interception.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageProjectUrl>https://github.com/red-gecko27/Moq.ReflectionProxy</PackageProjectUrl>
         <RepositoryUrl>https://github.com/red-gecko27/Moq.ReflectionProxy</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>moq;mocking;unittesting;reflection;proxy;csharp</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Moq" Version="[4.20.72,)"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="icon.png" Pack="true" PackagePath=""/>
+        <None Include="../README.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
 </Project>
